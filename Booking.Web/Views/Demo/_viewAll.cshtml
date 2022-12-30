@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Booking.Model.Models.Demo>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LogoUrl)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.AppUser)
+            </th>*@
+            <th>
+                <a onclick="showInPopup('@Url.Action("Edit","Demo",null,Context.Request.Scheme)','New Demo')" class="btn btn-sm btn-success text-white">
+                    <i class="fa-solid fa-plus"></i>Add New
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LogoUrl)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.AppUser.ImageUrl)
+                </td>*@
+                <td>
+                    <a onclick="showInPopup('@Url.Action("Edit","Demo",new {id=item.Id},Context.Request.Scheme)','Update Demo')" class="btn btn-sm btn-info text-white">
+                        <i class="fas fa-pencil-alt"></i> Edit
+                    </a>
+                    <a onclick="showInPopup('@Url.Action("Details","Demo",new {id=item.Id},Context.Request.Scheme)','Demo Info')" class="btn btn-sm btn-info text-warning">
+                        <i class="fa-regular fa-eye"></i> View
+                    </a>
+                    <form asp-action="Delete" asp-route-id="@item.Id" onsubmit="return jQueryAjaxDelete(this)" class="d-inline">
+                        <input type="hidden" asp-for="@item.Id" />
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+                    </form>
+
+                    @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

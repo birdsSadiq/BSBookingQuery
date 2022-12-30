@@ -1,0 +1,15 @@
+﻿@model IEnumerable<Booking.Model.Models.Demo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Demo List</h2>
+
+<div id="dvViewAll">
+    @await Html.PartialAsync("_viewAll",Model)
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

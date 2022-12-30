@@ -5,24 +5,24 @@ using Booking.Model.Models;
 using Booking.Web.Data;
 using Booking.Web.helpers;
 using Microsoft.AspNetCore.Authorization;
+using Booking.Web.Data.Repository;
 
 namespace Booking.Web.Controllers
 {
     [Authorize]
     public class DemoController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public DemoController(ApplicationDbContext context)
+        //private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork uow;
+        public DemoController(IUnitOfWork uow)
         {
-            _context = context;
+            this.uow = uow;
         }
 
         // GET: Demo
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Demo;//.Include(d => d.AppUser);
-            return View(await applicationDbContext.ToListAsync());
+            return View(uow.DemoRepository.GetAllAsync());
         }
 
         // GET: Demo/Edit/5
@@ -31,21 +31,18 @@ namespace Booking.Web.Controllers
             if (id == 0)
             {
                 Demo model = new Demo();
-                //model.AppUser = null;
-                //ViewData["AppUserId"] = new SelectList(_context.AppUser, "Id", "ImageUrl", model.AppUserId);
                 return View(model);
             }
             else
             {
-                var demo = await _context.Demo.FindAsync(id);
+                //var demo = await  _context.Demo.FindAsync(id);
+                var demo = uow.DemoRepository.GetById(id);
                 if (demo == null)
                 {
                     return NotFound();
                 }
-                ViewData["AppUserId"] = new SelectList(_context.AppUser, "Id", "ImageUrl", demo.AppUserId);
                 return View(demo);
             }
-
         }
 
         // POST: Demo/Edit/5
@@ -61,14 +58,14 @@ namespace Booking.Web.Controllers
                     if (id == 0)
                     {
                         msg = "Saved Successfully";
-                        _context.Add(model);//add
+                        uow.DemoRepository.Add(model);//add
                     }
                     else
                     {
                         msg = "Updated Successfully";
-                        _context.Update(model);//update
+                        uow.DemoRepository.Update(model);//update
                     }
-                    await _context.SaveChangesAsync();
+                    bool status = await uow.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -81,9 +78,8 @@ namespace Booking.Web.Controllers
                         throw;
                     }
                 }
-                return Json(new { isValid = true, message = msg, html = Helper.RenderRazorViewToString(this, "_ViewAll", _context.Demo.ToList()) });
+                return Json(new { isValid = true, message = msg, html = Helper.RenderRazorViewToString(this, "_ViewAll", uow.DemoRepository.GetAllAsync()) });
             }
-            ViewData["AppUserId"] = new SelectList(_context.AppUser, "Id", "ImageUrl", model.AppUserId);
             return Json(new { isValid = false, message = "Something went wrong!", html = Helper.RenderRazorViewToString(this, "Edit", model) });
         }
 
@@ -92,22 +88,22 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Demo == null)
+            if (!uow.DemoRepository.IsModelExist(id))
             {
-                return Problem("Entity set 'ApplicationDbContext.Demo'  is null.");
+                return Problem("Not Found.");
             }
-            var demo = await _context.Demo.FindAsync(id);
-            if (demo != null)
+            var model = uow.DemoRepository.GetById(id);
+            if (model != null)
             {
-                _context.Demo.Remove(demo);
+                uow.DemoRepository.Delete(id);
+                var result = uow.SaveAsync();
             }
-            await _context.SaveChangesAsync();
-            return Json(new { isValid = true, message = "Deleted Successfully", html = Helper.RenderRazorViewToString(this, "_ViewAll", _context.Demo.ToList()) });
+            return Json(new { isValid = true, message = "Deleted Successfully", html = Helper.RenderRazorViewToString(this, "_ViewAll", uow.DemoRepository.GetAllAsync()) });
         }
 
         private bool DemoExists(int id)
         {
-            return _context.Demo.Any(e => e.Id == id);
+            return uow.DemoRepository.IsModelExist(id);
         }
     }
 }

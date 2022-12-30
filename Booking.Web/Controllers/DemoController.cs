@@ -87,26 +87,6 @@ namespace Booking.Web.Controllers
             return Json(new { isValid = false, message = "Something went wrong!", html = Helper.RenderRazorViewToString(this, "Edit", model) });
         }
 
-
-        // GET: Demo/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Demo == null)
-            {
-                return NotFound();
-            }
-
-            var demo = await _context.Demo
-                //.Include(d => d.AppUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (demo == null)
-            {
-                return NotFound();
-            }
-
-            return View(demo);
-        }
-
         // POST: Demo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

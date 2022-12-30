@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Booking.Model.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Web.Data
@@ -9,5 +10,13 @@ namespace Booking.Web.Data
             : base(options)
         {
         }
+
+
+        #region tables
+        public DbSet<AppUser> AppUser { get; set; }
+        public DbSet<Demo> Demo { get; set; }
+        #endregion
+
+
     }
 }

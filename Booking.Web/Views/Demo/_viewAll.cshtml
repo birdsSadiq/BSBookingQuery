@@ -27,15 +27,15 @@
                     @Html.DisplayFor(modelItem => item.LogoUrl)
                 </td>
                 <td>
-                    <a onclick="showInPopup('@Url.Action("Edit","Demo",new {id=item.Id},Context.Request.Scheme)','Update Demo')" class="btn btn-sm btn-info text-white">
+                    <a onclick="showInPopup('@Url.Action("Edit","Demo",new {id=item.Id},Context.Request.Scheme)','Update Demo')" class="btn btn-sm btn-secondary">
                         <i class="fas fa-pencil-alt"></i> Edit
                     </a>
-                    <a onclick="showInPopup('@Url.Action("Details","Demo",new {id=item.Id},Context.Request.Scheme)','Demo Info')" class="btn btn-sm btn-info text-warning">
+                    <a onclick="showInPopup('@Url.Action("Details","Demo",new {id=item.Id},Context.Request.Scheme)','Demo Info')" class="btn btn-sm btn-info">
                         <i class="fa-regular fa-eye"></i> View
                     </a>
                     <form asp-action="Delete" asp-route-id="@item.Id" onsubmit="return jQueryAjaxDelete(this)" class="d-inline">
                         <input type="hidden" asp-for="@item.Id" />
-                        <input type="submit" value="Delete" class="btn btn-danger" />
+                        <input type="submit" value="Delete" class="btn btn-sm btn-danger" />
                     </form>
                 </td>
             </tr>

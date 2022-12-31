@@ -19,10 +19,6 @@ showInPopup = (url, title) => {
             $('#modalForm .modal-body').html(res);
             $('#modalForm .modal-title').html(title);
             $('#modalForm').modal('show');
-            // to make popup draggable
-            //$('.modal-dialog').draggable({
-            //    handle: ".modal-header"
-            //});
         }
     })
 }
@@ -46,7 +42,6 @@ jQueryAjaxPost = form => {
                         globalPosition: "top center",
                         className: "success"
                     })
-
                 } else {
                     $('#modalForm .modal-body').html(res.html);
                 }
@@ -77,7 +72,6 @@ jQueryAjaxDelete = form => {
                         globalPosition: "top center",
                         className: "success"
                     })
-
                 },
                 error: function (err) {
                     console.log(err)

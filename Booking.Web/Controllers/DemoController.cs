@@ -12,17 +12,18 @@ namespace Booking.Web.Controllers
     [Authorize]
     public class DemoController : Controller
     {
-        //private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
         private readonly IUnitOfWork uow;
-        public DemoController(IUnitOfWork uow)
+        public DemoController(IUnitOfWork uow, ApplicationDbContext context)
         {
             this.uow = uow;
+            this.context = context;
         }
 
         // GET: Demo
         public async Task<IActionResult> Index()
         {
-            return View(uow.DemoRepository.GetAllAsync());
+            return View(await uow.DemoRepository.GetAllAsync());
         }
 
         // GET: Demo/Edit/5
@@ -78,7 +79,8 @@ namespace Booking.Web.Controllers
                         throw;
                     }
                 }
-                return Json(new { isValid = true, message = msg, html = Helper.RenderRazorViewToString(this, "_ViewAll", uow.DemoRepository.GetAllAsync()) });
+                var models = uow.DemoRepository.GetAllAsync();
+                return Json(new { isValid = true, message = msg, html = Helper.RenderRazorViewToString(this, "_ViewAll", models.Result.ToList()) });
             }
             return Json(new { isValid = false, message = "Something went wrong!", html = Helper.RenderRazorViewToString(this, "Edit", model) });
         }
@@ -98,7 +100,24 @@ namespace Booking.Web.Controllers
                 uow.DemoRepository.Delete(id);
                 var result = uow.SaveAsync();
             }
-            return Json(new { isValid = true, message = "Deleted Successfully", html = Helper.RenderRazorViewToString(this, "_ViewAll", uow.DemoRepository.GetAllAsync()) });
+            //return Json(new { isValid = true, message = "Deleted Successfully", html = Helper.RenderRazorViewToString(this, "_ViewAll", uow.DemoRepository.GetAllAsync()) });
+            return Json(new { isValid = true, message = "Deleted Successfully", html = Helper.RenderRazorViewToString(this, "_ViewAll", context.Demo.ToList()) });
+        }
+
+        // GET: Demo/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var demo = uow.DemoRepository.GetById(id.Value);
+            if (demo == null)
+            {
+                return NotFound();
+            }
+
+            return View(demo);
         }
 
         private bool DemoExists(int id)
